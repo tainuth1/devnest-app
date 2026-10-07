@@ -1,0 +1,34 @@
+{
+  "name": "dev-nest-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "gsap": "^3.15.0",
+    "lucide-react": "^1.49.0",
+    "next": "16.3.6",
+    "ogl": "^1.0.11",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "sass": "^1.105.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.6",
+    "prettier": "^3.9.9",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
