@@ -208,3 +208,50 @@ export interface UsageMetric {
   percentage: number;
   description: string;
 }
+
+export interface ProjectMember {
+  id: string;
+  user_id: string;
+  email: string;
+  username: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  avatar_url: string | null;
+  role: "OWNER" | "ADMIN" | "EDITOR" | "VIEWER" | string;
+  is_you: boolean;
+  joined_at: string;
+}
+
+export interface InviteMemberRequest {
+  email: string;
+  role?: "ADMIN" | "EDITOR" | "VIEWER" | string;
+}
+
+export interface InviteMemberResponse {
+  invitation_id: string;
+  invitee_email: string;
+  role: string;
+  expires_at: string;
+  status: string;
+}
+
+export interface InviterSummary {
+  id: string;
+  email: string;
+  username?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+}
+
+export interface ProjectInvitation {
+  id: string;
+  project_id?: string;
+  inviter_user_id?: string;
+  invitee_email?: string;
+  email?: string;
+  role: string;
+  status: string;
+  expires_at: string;
+  created_at: string;
+  inviter?: InviterSummary | null;
+}

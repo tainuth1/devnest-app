@@ -9,12 +9,11 @@ const ProjectManagementLayout: React.FC<ProjectManagementLayoutProps> = ({
   children,
 }) => {
   return (
-    <div className="flex flex-1 min-h-[calc(100vh-3rem)]">
+    <div className="flex min-h-[calc(100vh-3rem)] flex-1">
       <ProjectSidebar />
-      <div className="flex-1 min-w-0">{children}</div>
+      <div className="min-w-0 flex-1">{children}</div>
     </div>
   );
 };
 
 export default ProjectManagementLayout;
-

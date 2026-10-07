@@ -29,6 +29,7 @@ import { useAuth } from "@/features/authentication";
 import { cn } from "@/shared/utils/cn";
 import { CommandPalette, FeedbackModal } from "../ui";
 import { ProjectsService } from "@/features/project/services/project.service";
+import { NotificationBell } from "@/features/notification";
 import { INITIAL_PROJECTS } from "@/shared/data/mock-data";
 import type { Project } from "@/features/project/types";
 
@@ -60,6 +61,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isWhatsNewOpen, setIsWhatsNewOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
@@ -140,6 +142,14 @@ export const Header: React.FC<HeaderProps> = ({
 
   const openWhatsNew = useCallback(() => {
     setIsWhatsNewOpen(true);
+  }, []);
+
+  const closeNotification = useCallback(() => {
+    setIsNotificationOpen(false);
+  }, []);
+
+  const openNotification = useCallback(() => {
+    setIsNotificationOpen(true);
   }, []);
 
   const closeUserMenu = useCallback(() => {
@@ -287,6 +297,7 @@ export const Header: React.FC<HeaderProps> = ({
         if (isProjectMenuOpen) closeProjectMenu();
         if (isHelpOpen) closeHelp();
         if (isWhatsNewOpen) closeWhatsNew();
+        if (isNotificationOpen) closeNotification();
         if (isUserMenuOpen) closeUserMenu();
       }
     };
@@ -297,10 +308,12 @@ export const Header: React.FC<HeaderProps> = ({
     isProjectMenuOpen,
     isHelpOpen,
     isWhatsNewOpen,
+    isNotificationOpen,
     isUserMenuOpen,
     closeProjectMenu,
     closeHelp,
     closeWhatsNew,
+    closeNotification,
     closeUserMenu,
   ]);
 
@@ -656,6 +669,7 @@ export const Header: React.FC<HeaderProps> = ({
                   closeHelp();
                 } else {
                   if (isWhatsNewOpen) closeWhatsNew();
+                  if (isNotificationOpen) closeNotification();
                   if (isUserMenuOpen) closeUserMenu();
                   openHelp();
                 }
@@ -728,6 +742,7 @@ export const Header: React.FC<HeaderProps> = ({
                   closeWhatsNew();
                 } else {
                   if (isHelpOpen) closeHelp();
+                  if (isNotificationOpen) closeNotification();
                   if (isUserMenuOpen) closeUserMenu();
                   openWhatsNew();
                 }
@@ -779,6 +794,22 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
+          {/* Notifications Bell */}
+          <NotificationBell
+            isOpen={isNotificationOpen}
+            onToggle={() => {
+              if (isNotificationOpen) {
+                closeNotification();
+              } else {
+                if (isHelpOpen) closeHelp();
+                if (isWhatsNewOpen) closeWhatsNew();
+                if (isUserMenuOpen) closeUserMenu();
+                openNotification();
+              }
+            }}
+            onClose={closeNotification}
+          />
+
           {/* User Avatar Menu */}
           <div className="relative" ref={userMenuRef}>
             <button
@@ -789,6 +820,7 @@ export const Header: React.FC<HeaderProps> = ({
                 } else {
                   if (isHelpOpen) closeHelp();
                   if (isWhatsNewOpen) closeWhatsNew();
+                  if (isNotificationOpen) closeNotification();
                   openUserMenu();
                 }
               }}

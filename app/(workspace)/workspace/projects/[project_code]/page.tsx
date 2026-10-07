@@ -219,7 +219,10 @@ const ProjectDetailPage = () => {
   }, [projectCodeParam]);
 
   useEffect(() => {
-    fetchProject();
+    const timer = setTimeout(() => {
+      fetchProject();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchProject]);
 
   const handleCopyCode = (code: string) => {

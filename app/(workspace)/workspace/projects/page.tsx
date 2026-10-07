@@ -1,16 +1,14 @@
 "use client";
 
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Search,
-  ChevronDown,
   ArrowUpDown,
   LayoutGrid,
   List as ListIcon,
   Plus,
   X,
-  Check,
   FolderGit2,
   AlertCircle,
   RefreshCw,
@@ -29,7 +27,13 @@ import { ProjectListRow } from "@/features/project/components/project-list-row";
 import { UpgradeModal } from "@/features/project/components/upgrade-modal";
 import { NewProjectModal } from "@/features/project/components/new-project-modal";
 import { UsagePanel } from "@/features/project/components/usage-panel";
-import { Button, Input, toast } from "@/shared/components/ui";
+import {
+  Button,
+  Input,
+  Select,
+  SelectOption,
+  toast,
+} from "@/shared/components/ui";
 
 type SortOption = "order" | "name" | "updated" | "created";
 
@@ -55,29 +59,32 @@ const ProjectManagementPage = () => {
       q: debouncedSearch.trim() || undefined,
     });
 
-  // Modals & Popovers
+  // Modals
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
-  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
-  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
-  // Refs for dropdowns outside click
-  const statusRef = useRef<HTMLDivElement>(null);
-  const sortRef = useRef<HTMLDivElement>(null);
+  const statusOptions: SelectOption<string>[] = useMemo(
+    () => [
+      { value: "All", label: "All statuses" },
+      ...PROJECT_STATUSES.map((status, idx) => ({
+        value: status.label,
+        label: status.label,
+        dotColor: PROJECT_STATUS_CONFIG[status.label]?.dotColor || "bg-muted",
+        dividerAbove: idx === 0,
+      })),
+    ],
+    []
+  );
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (statusRef.current && !statusRef.current.contains(target)) {
-        setIsStatusDropdownOpen(false);
-      }
-      if (sortRef.current && !sortRef.current.contains(target)) {
-        setIsSortDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const sortOptions: SelectOption<SortOption>[] = useMemo(
+    () => [
+      { value: "order", label: "Custom order" },
+      { value: "name", label: "Sorted by name" },
+      { value: "updated", label: "Sorted by recently updated" },
+      { value: "created", label: "Sorted by created date" },
+    ],
+    []
+  );
 
   const showToast = (message: string) => {
     toast.success(message);
@@ -182,15 +189,15 @@ const ProjectManagementPage = () => {
           />
 
           {/* Status Dropdown */}
-          <div className="relative" ref={statusRef}>
-            <button
-              type="button"
-              onClick={() => {
-                setIsStatusDropdownOpen((prev) => !prev);
-                setIsSortDropdownOpen(false);
-              }}
-              className="border-border text-body hover:border-border-hover flex h-8.5 cursor-pointer items-center gap-1.5 rounded-md border bg-white px-3 text-xs font-normal shadow-2xs transition-colors hover:bg-zinc-50 focus:outline-none"
-            >
+          <Select
+            size="md"
+            value={statusFilter}
+            onChange={(val) => setStatusFilter(val)}
+            options={statusOptions}
+            clearable
+            isCleared={statusFilter === "All"}
+            onClear={() => setStatusFilter("All")}
+            renderTrigger={() => (
               <span className="flex items-center gap-1.5">
                 {statusFilter !== "All" && (
                   <span
@@ -206,141 +213,25 @@ const ProjectManagementPage = () => {
                     : `Status: ${statusFilter}`}
                 </span>
               </span>
-              {statusFilter !== "All" ? (
-                <span
-                  role="button"
-                  tabIndex={0}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setStatusFilter("All");
-                  }}
-                  className="text-muted hover:text-heading rounded p-0.5 hover:bg-zinc-100"
-                  title="Clear status filter"
-                >
-                  <X className="h-3 w-3" />
-                </span>
-              ) : (
-                <ChevronDown className="text-muted h-3 w-3" />
-              )}
-            </button>
-
-            {isStatusDropdownOpen && (
-              <div className="border-border text-body absolute left-0 z-30 mt-1 w-44 rounded-xl border bg-white p-1 text-xs shadow-lg">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStatusFilter("All");
-                    setIsStatusDropdownOpen(false);
-                  }}
-                  className="hover:text-heading flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 transition-colors hover:bg-zinc-100"
-                >
-                  <span className="font-medium">All statuses</span>
-                  {statusFilter === "All" && (
-                    <Check className="h-3.5 w-3.5 text-emerald-600" />
-                  )}
-                </button>
-
-                <div className="border-border-subtle my-1 border-t" />
-
-                {PROJECT_STATUSES.map((status) => (
-                  <button
-                    key={status.id}
-                    type="button"
-                    onClick={() => {
-                      setStatusFilter(status.label);
-                      setIsStatusDropdownOpen(false);
-                    }}
-                    className="hover:bg-border-subtle hover:text-heading flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 transition-colors"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`h-2 w-2 rounded-full ${
-                          PROJECT_STATUS_CONFIG[status.label]?.dotColor ||
-                          "bg-muted"
-                        }`}
-                      />
-                      <span>{status.label}</span>
-                    </div>
-                    {statusFilter === status.label && (
-                      <Check className="text-primary h-3.5 w-3.5" />
-                    )}
-                  </button>
-                ))}
-              </div>
             )}
-          </div>
+            menuClassName="w-44"
+          />
 
           {/* Sort Dropdown */}
-          <div className="relative" ref={sortRef}>
-            <button
-              type="button"
-              onClick={() => {
-                setIsSortDropdownOpen((prev) => !prev);
-                setIsStatusDropdownOpen(false);
-              }}
-              className="border-border text-body hover:border-border-hover flex h-8.5 cursor-pointer items-center gap-1.5 rounded-md border bg-white px-3 text-xs font-normal shadow-2xs transition-colors hover:bg-zinc-50 focus:outline-none"
-            >
-              <ArrowUpDown className="text-muted h-3 w-3" />
-              <span>{sortLabelMap[sortBy]}</span>
-            </button>
-
-            {isSortDropdownOpen && (
-              <div className="border-border text-body absolute left-0 z-30 mt-1 w-55 rounded-xl border bg-white p-1 text-xs shadow-lg">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSortBy("order");
-                    setIsSortDropdownOpen(false);
-                  }}
-                  className="hover:text-heading flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 transition-colors hover:bg-zinc-100"
-                >
-                  <span>Custom order</span>
-                  {sortBy === "order" && (
-                    <Check className="h-3.5 w-3.5 text-emerald-600" />
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSortBy("name");
-                    setIsSortDropdownOpen(false);
-                  }}
-                  className="hover:text-heading flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 transition-colors hover:bg-zinc-100"
-                >
-                  <span>Sorted by name</span>
-                  {sortBy === "name" && (
-                    <Check className="h-3.5 w-3.5 text-emerald-600" />
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSortBy("updated");
-                    setIsSortDropdownOpen(false);
-                  }}
-                  className="hover:text-heading flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 transition-colors hover:bg-zinc-100"
-                >
-                  <span>Sorted by recently updated</span>
-                  {sortBy === "updated" && (
-                    <Check className="h-3.5 w-3.5 text-emerald-600" />
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSortBy("created");
-                    setIsSortDropdownOpen(false);
-                  }}
-                  className="hover:text-heading flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 transition-colors hover:bg-zinc-100"
-                >
-                  <span>Sorted by created date</span>
-                  {sortBy === "created" && (
-                    <Check className="h-3.5 w-3.5 text-emerald-600" />
-                  )}
-                </button>
-              </div>
+          <Select
+            size="md"
+            value={sortBy}
+            onChange={(val) => setSortBy(val as SortOption)}
+            options={sortOptions}
+            leftIcon={<ArrowUpDown className="text-muted h-3 w-3" />}
+            renderTrigger={() => (
+              <span className="flex items-center gap-1.5">
+                <ArrowUpDown className="text-muted h-3 w-3 shrink-0" />
+                <span>{sortLabelMap[sortBy]}</span>
+              </span>
             )}
-          </div>
+            menuClassName="w-55"
+          />
         </div>
 
         {/* Right Toolbar: View mode toggles + "+ New project" Button */}
@@ -437,19 +328,21 @@ const ProjectManagementPage = () => {
                   : "You haven't created or joined any projects yet."}
               </p>
               {searchQuery || statusFilter !== "All" ? (
-                <button
+                <Button
                   type="button"
                   onClick={() => {
                     setSearchQuery("");
                     setStatusFilter("All");
                   }}
-                  className="border-border text-body hover:border-border-hover mt-4 cursor-pointer rounded-lg border bg-white px-3 py-1.5 text-xs font-medium shadow-2xs hover:bg-zinc-50"
+                  size="sm"
+                  className="mt-4"
+                  variant="outline"
                 >
                   Clear filters
-                </button>
+                </Button>
               ) : (
-                <Link href="/workspace/projects/new">
-                  <Button leftIcon={<Plus />}>
+                <Link className="mt-4" href="/workspace/projects/new">
+                  <Button size="sm" leftIcon={<Plus />}>
                     Create Project
                   </Button>
                 </Link>

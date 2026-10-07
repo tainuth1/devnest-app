@@ -1,12 +1,7 @@
 import type { ReactNode } from "react";
 
 export type ToastType =
-  | "success"
-  | "error"
-  | "warning"
-  | "info"
-  | "loading"
-  | "default";
+  "success" | "error" | "warning" | "info" | "loading" | "default";
 
 export type ToastPosition =
   | "top-left"

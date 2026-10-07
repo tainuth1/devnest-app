@@ -43,7 +43,7 @@ const MCPPage = () => {
   };
 
   return (
-    <div className="flex flex-1 flex-col h-[calc(100vh-3rem)] bg-zinc-50/50">
+    <div className="flex h-[calc(100vh-3rem)] flex-1 flex-col bg-zinc-50/50">
       {/* Top Action Bar */}
       <div className="flex h-14 items-center justify-between border-b border-zinc-200 bg-white px-6">
         <div className="flex items-center gap-3">
@@ -55,12 +55,13 @@ const MCPPage = () => {
               <h1 className="text-sm font-semibold text-zinc-900">
                 Model Context Protocol (MCP) & Developer Tools
               </h1>
-              <span className="rounded-full border border-sky-200 bg-sky-50 px-2 py-0.2 text-[10px] font-semibold text-sky-700">
+              <span className="py-0.2 rounded-full border border-sky-200 bg-sky-50 px-2 text-[10px] font-semibold text-sky-700">
                 Protocol v1
               </span>
             </div>
             <p className="text-[11px] text-zinc-500">
-              Connect Cursor, VS Code, and Antigravity directly to your project diagrams, schemas & specs
+              Connect Cursor, VS Code, and Antigravity directly to your project
+              diagrams, schemas & specs
             </p>
           </div>
         </div>
@@ -73,9 +74,9 @@ const MCPPage = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 p-6 max-w-4xl mx-auto w-full space-y-6">
+      <div className="mx-auto w-full max-w-4xl flex-1 space-y-6 p-6">
         {/* IDE Config Card */}
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xs space-y-4">
+        <div className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <Terminal className="h-5 w-5 text-zinc-600" />
@@ -84,14 +85,24 @@ const MCPPage = () => {
                   IDE MCP Server Configuration
                 </h3>
                 <p className="text-xs text-zinc-500">
-                  Add this block to your <code className="bg-zinc-100 px-1 py-0.5 rounded text-zinc-700">mcp_config.json</code> in Cursor or Antigravity
+                  Add this block to your{" "}
+                  <code className="rounded bg-zinc-100 px-1 py-0.5 text-zinc-700">
+                    mcp_config.json
+                  </code>{" "}
+                  in Cursor or Antigravity
                 </p>
               </div>
             </div>
             <Button
               variant="outline"
               size="sm"
-              leftIcon={copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+              leftIcon={
+                copied ? (
+                  <Check className="h-3.5 w-3.5 text-emerald-600" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" />
+                )
+              }
               onClick={handleCopy}
             >
               {copied ? "Copied" : "Copy Configuration"}
@@ -105,21 +116,33 @@ const MCPPage = () => {
 
         {/* MCP Tools Summary */}
         <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xs">
-          <h3 className="text-sm font-semibold text-zinc-900 mb-3">
+          <h3 className="mb-3 text-sm font-semibold text-zinc-900">
             Available Project Tools Exposed via MCP
           </h3>
           <div className="divide-y divide-zinc-100 text-xs">
-            <div className="py-2.5 flex items-center justify-between">
-              <span className="font-mono text-zinc-800">devnest_get_project_context</span>
-              <span className="text-zinc-500">Fetches PRD documents, active flows & schema models</span>
+            <div className="flex items-center justify-between py-2.5">
+              <span className="font-mono text-zinc-800">
+                devnest_get_project_context
+              </span>
+              <span className="text-zinc-500">
+                Fetches PRD documents, active flows & schema models
+              </span>
             </div>
-            <div className="py-2.5 flex items-center justify-between">
-              <span className="font-mono text-zinc-800">devnest_get_db_schema</span>
-              <span className="text-zinc-500">Returns normalized tables, relationships & PostgreSQL DDL</span>
+            <div className="flex items-center justify-between py-2.5">
+              <span className="font-mono text-zinc-800">
+                devnest_get_db_schema
+              </span>
+              <span className="text-zinc-500">
+                Returns normalized tables, relationships & PostgreSQL DDL
+              </span>
             </div>
-            <div className="py-2.5 flex items-center justify-between">
-              <span className="font-mono text-zinc-800">devnest_get_flow_diagram</span>
-              <span className="text-zinc-500">Returns architecture graph nodes & sequence flow steps</span>
+            <div className="flex items-center justify-between py-2.5">
+              <span className="font-mono text-zinc-800">
+                devnest_get_flow_diagram
+              </span>
+              <span className="text-zinc-500">
+                Returns architecture graph nodes & sequence flow steps
+              </span>
             </div>
           </div>
         </div>
